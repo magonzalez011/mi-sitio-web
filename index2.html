@@ -56,6 +56,31 @@
     .btn-actualizar { background-color: #053563; color: white; }
     .btn-comanda { background-color: #28a745; color: white; }
     .btn-fecha { background-color: #17a2b8; color: white; }
+
+    /* Contenedor scroll horizontal para móviles */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Ajustes en pantallas pequeñas */
+@media (max-width: 600px) {
+  /* Ajustar layout de los filtros y botones */
+  .filtros {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .filtros button, .filtros input {
+    width: 100%;
+    font-size: 16px; /* que sea legible en móvil */
+  }
+
+  table {
+    font-size: 14px; /* ajusta tamaño de texto */
+  }
+}
+
 </style>
 </head>
 <body>
@@ -94,20 +119,22 @@
         </div>
 
         <div id="resultados">
-            <table id="tablaResultados">
-                <thead>
-                    <tr>
-                        <th>Número Comanda</th>
-                        <th>Fecha</th>
-                        <th>Habitación</th>
-                        <th>Alergias</th>
-                        <th>Tiempo Comida</th>
-                        <th>Alimento</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-container">
+                <table id="tablaResultados">
+                    <thead>
+                        <tr>
+                            <th>Número Comanda</th>
+                            <th>Fecha</th>
+                            <th>Habitación</th>
+                            <th>Alergias</th>
+                            <th>Tiempo Comida</th>
+                            <th>Alimento</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
