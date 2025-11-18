@@ -170,7 +170,7 @@ async function cargarDatos(url, filtro=false) {
             if(filtro) fila.classList.add("filtro");
             fila.innerHTML = `
                 <td>${r.NumeroComanda}</td>
-                <td>${formatoFechaCorta(r.Fecha)}</td>
+                <td>${r.Fecha}</td>
                 <td>${r.Habitacion}</td>
                 <td>${r.Alergias || ""}</td>
                 <td>${r.TiempoComida}</td>
@@ -212,3 +212,4 @@ window.onload = consultarTodos;
 
 </body>
 </html>
+
