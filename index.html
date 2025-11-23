@@ -8,6 +8,7 @@
 <style>
     body { background: #e8f1f8; }
     .form-container { background-image: url("img/hospital.jpg"); background-size: cover; background-repeat: no-repeat; background-position: left; padding: 25px; border-radius: 12px; box-shadow: 0px 3px 10px rgba(0,0,0,0.1); max-width: 1100px; }
+    .form-label { font-weight: bold; }
     .btn-primary, .btn-success, .btn-danger { border-radius: 10px; }
     input, select, textarea { border-radius: 10px !important; }
 </style>
@@ -16,7 +17,7 @@
 
 <div class="container-fluid my-4 px-3 px-md-5 d-flex justify-content-center">
 <div class="form-container w-100">
-<!-- LOGO -->
+    <!-- LOGO -->
         <div class="text-center mb-4">  
             <img src="img/LOGO.jfif" style="float:center; margin-right: 20px;">
         </div>
@@ -30,13 +31,13 @@
         <input type="text" class="form-control" id="numeroComanda" readonly>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
-        <label class="form-label">Timestamp</label>
-        <input type="text" class="form-control" id="timestamp" readonly>
-    </div>
-    <div class="col-12 col-sm-6 col-md-3">
-        <label class="form-label">Fecha</label>
-        <input type="date" class="form-control" id="fecha" required>
-    </div>
+            <label class="form-label">Timestamp</label>
+            <input type="text" class="form-control" id="timestamp" readonly>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="fecha" required>
+        </div>
     <div class="col-12 col-sm-6 col-md-3">
         <label class="form-label">Piso</label>
         <input type="text" class="form-control" id="piso">
@@ -68,11 +69,11 @@
     <div class="col-12 col-sm-6 col-md-4">
         <label class="form-label">Dietista</label>
         <select id="dietista" class="form-select" required>
-            <option>Verónica</option>
-            <option>Fernanda</option>
-            <option>Mariana</option>
             <option>Arantza</option>
+            <option>Fernanda</option>
             <option>Fernando</option>
+            <option>Mariana</option>
+            <option>Verónica</option>
         </select>
     </div>
     <div class="col-12 col-md-4">
@@ -85,8 +86,13 @@
             <option>Astringente</option>
             <option>Blanda</option>
             <option>Diabético</option>
+            <option>Hepática</option>
+            <option>Hiperprotéica</option>
+            <option>Hipocalórica</option>
             <option>Hiposódica</option>
             <option>Líquida</option>
+            <option>Nefrópata</option>
+            <option>Pures</option>             
         </select>
     </div>
     <div class="col-12">
@@ -118,7 +124,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3TszSX1WiG2qWIpPLb5H2M6ovQyiUm_4710jiI4zxXTH8WRy5NO1UpEGkn6SYh2aF8g/exec"; // <- Cambia por tu URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGj9B55vHP689OLRsk22zt0p_M7Qm6lruv5BLQn0wGzoQwJSQUEK-5M3UVQ3VXLVR-mQ/exec"; // <- Cambia por tu URL
 const PIN_RESET = "4321";
 
 // Inicializa número de comanda y timestamp
@@ -185,5 +191,3 @@ window.onload = inicializar;
 
 </body>
 </html>
-
-
