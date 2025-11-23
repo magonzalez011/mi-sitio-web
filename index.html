@@ -18,9 +18,9 @@
 <div class="container-fluid my-4 px-3 px-md-5 d-flex justify-content-center">
 <div class="form-container w-100">
     <!-- LOGO -->
-        <div class="text-center mb-4">  
-            <img src="img/LOGO.jfif" style="float:center; margin-right: 20px;">
-        </div>
+    <div class="text-center mb-4">  
+        <img src="img/LOGO.jfif" style="float:center; margin-right: 20px;">
+    </div>
 
 <h1 class="text-center mb-4" style="color:#053563;">Registro de Comandas</h1>
 
@@ -31,13 +31,13 @@
         <input type="text" class="form-control" id="numeroComanda" readonly>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
-            <label class="form-label">Timestamp</label>
-            <input type="text" class="form-control" id="timestamp" readonly>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3">
-            <label class="form-label">Fecha</label>
-            <input type="date" class="form-control" id="fecha" required>
-        </div>
+        <label class="form-label">Timestamp</label>
+        <input type="text" class="form-control" id="timestamp" readonly>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-control" id="fecha" required>
+    </div>
     <div class="col-12 col-sm-6 col-md-3">
         <label class="form-label">Piso</label>
         <input type="text" class="form-control" id="piso">
@@ -84,15 +84,18 @@
         <label class="form-label">Tipo de dieta</label>
         <select class="form-select" id="tipoDieta" required>
             <option>Astringente</option>
+            <option>Basal</option>
             <option>Blanda</option>
             <option>Diabético</option>
+            <option>Fácil_Masticación</option>
             <option>Hepática</option>
             <option>Hiperprotéica</option>
             <option>Hipocalórica</option>
             <option>Hiposódica</option>
             <option>Líquida</option>
             <option>Nefrópata</option>
-            <option>Pures</option>             
+            <option>Semiblanda</option>
+            <option>Semilíquida</option>     
         </select>
     </div>
     <div class="col-12">
@@ -124,17 +127,25 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGj9B55vHP689OLRsk22zt0p_M7Qm6lruv5BLQn0wGzoQwJSQUEK-5M3UVQ3VXLVR-mQ/exec"; // <- Cambia por tu URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGj9B55vHP689OLRsk22zt0p_M7Qm6lruv5BLQn0wGzoQwJSQUEK-5M3UVQ3VXLVR-mQ/exec"; // <- tu URL
 const PIN_RESET = "4321";
+
+// Convierte fecha yyyy-mm-dd -> dd/mm/yyyy
+function convertirFechaADDMMAAAA(fechaISO) {
+    if (!fechaISO) return "";
+    const partes = fechaISO.split("-");
+    if (partes.length !== 3) return fechaISO;
+    return partes[2] + "/" + partes[1] + "/" + partes[0];
+}
 
 // Inicializa número de comanda y timestamp
 async function inicializar() {
-    try{
+    try {
         const res = await fetch(`${SCRIPT_URL}?accion=siguiente`);
         const data = await res.json();
         document.getElementById("numeroComanda").value = String(data.numeroComanda).padStart(3,"0");
-        document.getElementById("timestamp").value = new Date().toLocaleString();
-    } catch(err){
+        document.getElementById("timestamp").value = new Date().toLocaleString(); // mantiene timestamp
+    } catch(err) {
         console.error("Error obteniendo número de comanda:", err);
         alert("No se pudo obtener el número de comanda desde la hoja.");
     }
@@ -145,11 +156,11 @@ async function guardarComanda() {
     const datos = {
         numeroComanda: document.getElementById("numeroComanda").value,
         timestamp: document.getElementById("timestamp").value,
-        fecha: document.getElementById("fecha").value,
+        fecha: convertirFechaADDMMAAAA(document.getElementById("fecha").value),
         piso: document.getElementById("piso").value,
         habitacion: document.getElementById("habitacion").value,
         paciente: document.getElementById("paciente").value,
-        fechaNacimiento: document.getElementById("fechaNacimiento").value,
+        fechaNacimiento: convertirFechaADDMMAAAA(document.getElementById("fechaNacimiento").value),
         alergias: document.getElementById("alergias").value,
         tiempoComida: document.getElementById("tiempoComida").value,
         dietista: document.getElementById("dietista").value,
@@ -160,12 +171,12 @@ async function guardarComanda() {
         observaciones: document.getElementById("observaciones").value
     };
 
-    try{
-        await fetch(SCRIPT_URL, { method:"POST", body: JSON.stringify(datos) });
+    try {
+        await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(datos) });
         alert("Comanda guardada correctamente ✔");
-        document.getElementById("formComanda").reset(); // limpiar campos
-        inicializar(); // nuevo número y timestamp
-    } catch(err){
+        document.getElementById("formComanda").reset();
+        inicializar();
+    } catch(err) {
         console.error("Error guardando comanda:", err);
         alert("No se pudo guardar la comanda.");
     }
