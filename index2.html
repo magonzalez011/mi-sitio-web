@@ -48,39 +48,15 @@
         background-color: #f2f2f2;
     }
     tr.filtro {
-        background-color: #cce5ff !important; /* color especial para filas filtradas */
+        background-color: #cce5ff !important;
     }
     .filter-row .form-control {
         margin-bottom: 10px;
     }
     .btn-actualizar { background-color: #053563; color: white; }
-    .btn-comanda { background-color: #28a745; color: white; }
-    .btn-fecha { background-color: #17a2b8; color: white; }
-
-    /* Contenedor scroll horizontal para móviles */
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* Ajustes en pantallas pequeñas */
-@media (max-width: 600px) {
-  /* Ajustar layout de los filtros y botones */
-  .filtros {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .filtros button, .filtros input {
-    width: 100%;
-    font-size: 16px; /* que sea legible en móvil */
-  }
-
-  table {
-    font-size: 14px; /* ajusta tamaño de texto */
-  }
-}
-
+    .btn-comanda { background-color: #045216; color: white; }
+    .btn-fecha { background-color: #040b0c; color: white; }
+    .btn-habitacion { background-color: #470410; color: white; }
 </style>
 </head>
 <body>
@@ -89,7 +65,7 @@
     <div class="form-container">
         <img src="img/LOGO.jfif" class="logo" alt="Logo">
 
-        <h1 class="text-center mb-4" style="color:#053563;">Orden de Servicio Le Pain Quotidien</h1>
+        <h1 class="text-center mb-4" style="color:#053563; font-weight: bold;">Ordenes de Servicio</h1>
 
         <div class="row filter-row mb-3">
             <div class="col-md-3">
@@ -98,57 +74,58 @@
             <div class="col-md-3">
                 <input type="number" class="form-control" id="comandaFin" placeholder="Número Comanda Fin">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <input type="number" class="form-control" id="filtroHabitacion" placeholder="Habitación">
+            </div>
+            <div class="col-md-2">
                 <input type="date" class="form-control" id="fechaInicio">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <input type="date" class="form-control" id="fechaFin">
             </div>
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-4 mb-2">
+            <div class="col-md-3 mb-2">
                 <button class="btn btn-actualizar w-100" onclick="consultarTodos()">Actualizar Todo</button>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-3 mb-2">
                 <button class="btn btn-comanda w-100" onclick="consultarPorComanda()">Buscar por Comanda</button>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-3 mb-2">
+                <button class="btn btn-habitacion w-100" onclick="consultarPorHabitacion()">Buscar por Habitación</button>
+            </div>
+            <div class="col-md-3 mb-2">
                 <button class="btn btn-fecha w-100" onclick="consultarPorFecha()">Buscar por Fecha</button>
             </div>
         </div>
 
         <div id="resultados">
-            <div class="table-container">
-                <table id="tablaResultados">
-                    <thead>
-                        <tr>
-                            <th>Número Comanda</th>
-                            <th>Fecha</th>
-                            <th>Habitación</th>
-                            <th>Alergias</th>
-                            <th>Tiempo Comida</th>
-                            <th>Alimento</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            <table id="tablaResultados">
+                <thead>
+                    <tr>
+                        <th>No Comanda</th>
+                        <th>Timestamp</th>
+                        <th>Fecha</th>
+                        <th>Habitación</th>
+                        <th>Alergias</th>
+                        <th>Tiempo Comida</th>
+                        <th>Alimento</th>
+                        <th>Estado</th>
+    </tr>
+</thead>
+
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8ES-2QNzAnjuWQt1muVCU1bV6TVOhWVj1UxuMRGI5le405n7LCDirTNKT99rTKHSV3w/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmHr2WWSLxE9LnHArOvinSlCZxvLUPOtSK3dVuiQKU-oTgBKqg4maBmuGSOkjA9kHe5A/exec"; // Reemplazar con tu Web App
 
 function formatoFechaCorta(fecha) {
-    if (!fecha) return ""; // si está vacío
-    const d = new Date(fecha);
-    if (isNaN(d)) return fecha; // si no se puede convertir, mostrar tal cual
-    return d.getDate().toString().padStart(2,'0') + '/' +
-           (d.getMonth()+1).toString().padStart(2,'0') + '/' +
-           d.getFullYear();
+    return fecha || "";
 }
 
 async function cargarDatos(url, filtro=false) {
@@ -170,7 +147,8 @@ async function cargarDatos(url, filtro=false) {
             if(filtro) fila.classList.add("filtro");
             fila.innerHTML = `
                 <td>${r.NumeroComanda}</td>
-                <td>${r.Fecha}</td>
+                <td>${r.Timestamp || ""}</td>
+                <td>${formatoFechaCorta(r.Fecha)}</td>
                 <td>${r.Habitacion}</td>
                 <td>${r.Alergias || ""}</td>
                 <td>${r.TiempoComida}</td>
@@ -198,6 +176,13 @@ function consultarPorComanda() {
     cargarDatos(url, true);
 }
 
+function consultarPorHabitacion() {
+    const habitacion = document.getElementById("filtroHabitacion").value.trim();
+    if (!habitacion) { alert("Ingrese habitación"); return; }
+    const url = `${SCRIPT_URL}?accion=porHabitacion&habitacion=${encodeURIComponent(habitacion)}`;
+    cargarDatos(url, true);
+}
+
 function consultarPorFecha() {
     const inicio = document.getElementById("fechaInicio").value;
     const fin = document.getElementById("fechaFin").value;
@@ -212,4 +197,3 @@ window.onload = consultarTodos;
 
 </body>
 </html>
-
