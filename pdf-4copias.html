@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comanda Nutrición</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body{
+        background:#ededed;
+        font-family: Arial, sans-serif;
+    }
+
+    /* ---------- PANTALLA ---------- */
+    .screen-wrapper{
+        display:flex;
+        justify-content:center;
+        padding:20px;
+    }
+
+    .comanda{
+        width:520px;
+        background:#fff;
+        border:2px solid #0047ff;
+        padding:10px;              /* 🔽 reducido */
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .label{
+        font-size:0.72rem;         /* 🔽 reducido */
+        font-weight:bold;
+        margin-bottom:1px;         /* 🔽 reducido */
+    }
+
+    .campo{
+        border:2px solid #0047ff;
+        padding:3px 5px;           /* 🔽 reducido */
+        min-height:26px;           /* 🔽 reducido */
+        font-size:0.82rem;         /* 🔽 reducido */
+        background:#fff;
+    }
+
+    .campo-grande{
+        min-height:52px;           /* 🔽 CLAVE */
+        background:#dce8f8;
+    }
+
+    .campo-observ{
+        min-height:46px;           /* 🔽 CLAVE */
+        background:#e6e0f2;
+    }
+
+    .tiempo{
+        background:#ffb400;
+        font-weight:bold;
+        text-align:center;
+    }
+
+    .logo{
+    height:72px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding-top:6px; /* 🔑 separa del No. de Comanda */
+}
+
+
+    /* ---------- IMPRESIÓN ---------- */
+    @page{
+        size: letter;
+        margin:0.4cm;              /* 🔽 reducido */
+    }
+
+    @media print{
+        body{ background:#fff; }
+
+        .screen-wrapper{
+            padding:0;
+        }
+
+        .print-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            grid-template-rows:auto auto;
+            gap:0.25cm;            /* 🔽 reducido */
+        }
+
+        .comanda{
+            width:100%;
+            transform:scale(0.88); /* 🔽 CLAVE FINAL */
+            transform-origin:top left;
+        }
+
+        .no-print{
+            display:none;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="screen-wrapper">
+    <div class="print-grid" id="printGrid">
+
+        <!-- COMANDA BASE -->
+        <div class="comanda" id="comandaBase">
+
+            <div class="row mb-1">
+                <div class="col-6">
+                    <div class="label">Fecha</div>
+                    <div id="fecha" class="campo"></div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="label">NO DE COMANDA</div>
+                    <div id="numeroComanda" class="campo"></div>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-8">
+                    <div class="label">NOMBRE COMPLETO DEL PACIENTE</div>
+                    <div id="paciente" class="campo"></div>
+                </div>
+                <div class="col-4 logo">
+                    <img src="img/LOGO.jfif" style="max-height:82px;">
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-6">
+                    <div class="label">Fecha de Nacimiento</div>
+                    <div id="fechaNacimiento" class="campo"></div>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-4">
+                    <div class="label">Piso</div>
+                    <div id="piso" class="campo"></div>
+                </div>
+                <div class="col-4">
+                    <div class="label">Tiempo de comida</div>
+                    <div id="tiempoComida" class="campo tiempo"></div>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-4">
+                    <div class="label">Habitación</div>
+                    <div id="habitacion" class="campo"></div>
+                </div>
+                <div class="col-4">
+                    <div class="label">Tipo de dieta</div>
+                    <div id="tipoDieta" class="campo"></div>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-4">
+                    <div class="label">Diagnóstico</div>
+                    <div id="diagnostico" class="campo"></div>
+                </div>
+                <div class="col-8">
+                    <div class="label">Platillo Solicitado</div>
+                    <div id="alimento" class="campo campo-grande"></div>
+                </div>
+            </div>
+
+            <div class="mb-1">
+                <div class="label">Alergias</div>
+                <div id="alergias" class="campo campo-observ"></div>
+            </div>
+
+            <div class="mb-1">
+                <div class="label">Observaciones</div>
+                <div id="observaciones" class="campo campo-observ"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-3 no-print">
+    <button class="btn btn-primary btn-sm" onclick="window.print()">🖨 Imprimir</button>
+</div>
+
+<script>
+/* ---------- CLONAR 4 COMANDAS ---------- */
+const grid = document.getElementById("printGrid");
+const base = document.getElementById("comandaBase");
+
+for(let i=1;i<4;i++){
+    grid.appendChild(base.cloneNode(true));
+}
+
+/* ---------- RECEPCIÓN DESDE FORMULARIO ---------- */
+window.addEventListener("message", (event) => {
+    const datos = event.data;
+
+    if(!datos) return;
+
+    Object.keys(datos).forEach(id => {
+        document.querySelectorAll(`#${id}`).forEach(el => {
+            el.innerText = datos[id] || "";
+        });
+    });
+});
+</script>
+
+
+</body>
+</html>
