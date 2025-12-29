@@ -84,18 +84,14 @@
         <label class="form-label">Tipo de dieta</label>
         <select class="form-select" id="tipoDieta" required>
             <option>Astringente</option>
-            <option>Basal</option>
             <option>Blanda</option>
             <option>Diabético</option>
-            <option>Fácil_Masticación</option>
-            <option>Hepática</option>
-            <option>Hiperprotéica</option>
-            <option>Hipocalórica</option>
             <option>Hiposódica</option>
             <option>Líquida</option>
             <option>Nefrópata</option>
-            <option>Semiblanda</option>
-            <option>Semilíquida</option>     
+            <option>Normal</option>
+            <option>Picado Fino</option>
+            <option>Papillas</option>
         </select>
     </div>
     <div class="col-12">
@@ -114,13 +110,24 @@
     </div>
 
     <!-- Botones -->
+         
     <div class="col-12">
-        <button type="button" class="btn btn-success w-100" onclick="guardarComanda()">Guardar Comanda</button>
+    <button type="button" class="btn btn-secondary" onclick="abrirTicket()">🧾 Imprimir Ticket</button>
     </div>
 
     <div class="col-12">
-        <button type="button" class="btn btn-danger w-100" onclick="verificarPIN()">🔐 Resetear número de comandas</button>
+    <button type="button" class="btn btn-primary" onclick="abrirPDF()">📄 Imprimir 4 copias</button>
     </div>
+
+    <div class="col-12">
+        <button type="button" class="btn btn-dark w-100" onclick="guardarComanda()">Guardar Comanda</button>
+    </div>
+
+    <div class="col-12">
+        <button type="button" class="btn btn-danger" onclick="verificarPIN()">🔐 Resetear número de comandas</button>
+    </div>
+
+
 </form>
 
 </div>
@@ -198,6 +205,63 @@ async function verificarPIN() {
 
 // Ejecutar al cargar la página
 window.onload = inicializar;
+
+let ticketWindow = null;
+
+function abrirTicket(){
+    ticketWindow = window.open(
+        "ticket.html",
+        "ticket",
+        "width=320,height=600"
+    );
+
+    const datos = {
+        fecha: document.getElementById("fecha").value,
+        numeroComanda: document.getElementById("numeroComanda").value,
+        paciente: document.getElementById("paciente").value,
+        fechaNacimiento: document.getElementById("fechaNacimiento").value,
+        piso: document.getElementById("piso").value,
+        habitacion: document.getElementById("habitacion").value,
+        tiempoComida: document.getElementById("tiempoComida").value,
+        tipoDieta: document.getElementById("tipoDieta").value,
+        diagnostico: document.getElementById("diagnostico").value,
+        alimento: document.getElementById("alimento").value,
+        alergias: document.getElementById("alergias").value,
+        observaciones: document.getElementById("observaciones").value
+    };
+
+    setTimeout(()=>{
+        ticketWindow.postMessage(datos,"*");
+    },500);
+}
+
+function abrirPDF(){
+    const win = window.open(
+        "pdf-4copias.html",
+        "pdf",
+        "width=900,height=700"
+    );
+
+    const datos = {
+        fecha: document.getElementById("fecha").value,
+        numeroComanda: document.getElementById("numeroComanda").value,
+        paciente: document.getElementById("paciente").value,
+        fechaNacimiento: document.getElementById("fechaNacimiento").value,
+        piso: document.getElementById("piso").value,
+        habitacion: document.getElementById("habitacion").value,
+        tiempoComida: document.getElementById("tiempoComida").value,
+        tipoDieta: document.getElementById("tipoDieta").value,
+        diagnostico: document.getElementById("diagnostico").value,
+        alimento: document.getElementById("alimento").value,
+        alergias: document.getElementById("alergias").value,
+        observaciones: document.getElementById("observaciones").value
+    };
+
+    setTimeout(()=>{
+        win.postMessage(datos,"*");
+    },500);
+}
+
 </script>
 
 </body>
