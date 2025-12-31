@@ -69,6 +69,7 @@
     <div class="col-12 col-sm-6 col-md-4">
         <label class="form-label">Dietista</label>
         <select id="dietista" class="form-select" required>
+            <option>Aly</option>
             <option>Arantza</option>
             <option>Fernanda</option>
             <option>Fernando</option>
@@ -116,7 +117,7 @@
     </div>
 
     <div class="col-12">
-    <button type="button" class="btn btn-primary" onclick="abrirPDF()">📄 Imprimir 4 copias</button>
+    <button type="button" class="btn btn-primary" onclick="abrirPDF()">📄 Imprimir 2 copias</button>
     </div>
 
     <div class="col-12">
@@ -127,6 +128,9 @@
         <button type="button" class="btn btn-danger" onclick="verificarPIN()">🔐 Resetear número de comandas</button>
     </div>
 
+    <div class="col-12">
+        <button type="button" class="btn btn-warning" onclick="abrirHistorial()">📋 Historial de comandas</button>
+    </div>
 
 </form>
 
@@ -261,6 +265,15 @@ function abrirPDF(){
         win.postMessage(datos,"*");
     },500);
 }
+
+function abrirHistorial(){
+  window.open(
+    "historial.html",
+    "historial",
+    "width=1200,height=700"
+  );
+}
+
 
 </script>
 
