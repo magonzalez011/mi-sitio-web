@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historial de Comandas - Nutrición</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body{
+        background:#e8f1f8;
+    }
+    .contenedor{
+        background-image:url("img/hospital.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-position:left;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0px 3px 10px rgba(0,0,0,0.1);
+        max-width:1200px;
+    }
+    h1{
+        color:#053563;
+        font-weight:bold;
+    }
+    table{
+        background:#fff;
+        border-radius:10px;
+        overflow:hidden;
+    }
+    th{
+        background:#053563;
+        color:#fff;
+        text-align:center;
+        vertical-align:middle;
+        font-size:14px;
+    }
+    td{
+        font-size:13px;
+        vertical-align:middle;
+    }
+    .acciones button{
+        margin:2px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid my-4 px-3 px-md-5 d-flex justify-content-center">
+<div class="contenedor w-100">
+
+    <!-- LOGO -->
+    <div class="text-center mb-4">
+        <img src="img/LOGO.jfif" style="max-height:80px;">
+    </div>
+
+    <h1 class="text-center mb-4">Historial de Comandas</h1>
+
+    <!-- BOTONES -->
+    <div class="row mb-3">
+        <div class="col-12 col-md-4 mb-2">
+            <button class="btn btn-secondary w-100" onclick="seleccionarTodo()">✅ Seleccionar todo</button>
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+            <button class="btn btn-success w-100" onclick="imprimirTickets()">🧾 Imprimir tickets</button>
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+            <button class="btn btn-primary w-100" onclick="imprimirPDF()">📄 PDF 2 copias</button>
+        </div>
+    </div>
+    <!-- FILTROS DE IMPRESIÓN -->
+<div class="row g-2 mb-3 no-print">
+
+    <!-- FECHA -->
+    <div class="col-12 col-md-4">
+        <label class="form-label fw-bold">📅 Fecha</label>
+        <input type="date" id="filtroFecha" class="form-control">
+    </div>
+
+    <!-- TIEMPO -->
+    <div class="col-12 col-md-4">
+        <label class="form-label fw-bold">🍽 Tiempo de comida</label>
+        <select id="filtroTiempo" class="form-select">
+            <option value="">Todos</option>
+            <option value="DESAYUNO">Desayuno</option>
+            <option value="COMIDA">Comida</option>
+            <option value="CENA">Cena</option>
+        </select>
+    </div>
+
+    <!-- BOTÓN -->
+    <div class="col-12 col-md-4 d-grid align-self-end">
+        <button class="btn btn-warning" onclick="aplicarFiltros()">
+            🔎 Aplicar filtros
+        </button>
+   </div>
+   <div class="col-12 col-md-3">
+        <button class="btn btn-info w-100" onclick="quitarFiltros()">
+            🔄 Quitar filtros
+        </button>
+    </div>
+    <div class="col-12 col-md-3">
+        <button class="btn btn-info w-100"
+                onclick="window.location.href='index.html'">
+            ⬅ Volver a comanda
+        </button>
+    </div>
+
+    <!-- TABLA RESPONSIVE -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead>
+                <tr>
+                    <th>✔</th>
+                    <th>No. Comanda</th>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Piso</th>
+                    <th>Hab.</th>
+                    <th>Tiempo</th>
+                    <th>Dieta</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tabla"></tbody>
+        </table>
+    </div>
+
+
+</div>
+
+</div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxBHzkM3H-SU79wdauFD4r3FQ2hovjjCw-RRBL9DgM9tUWnju0s716hq6rchW4_OZ1AQ/exec";
+
+fetch(`${SCRIPT_URL}?historial=1`)
+  .then(res => res.json())
+  .then(data => {
+      data.forEach(r => {
+          tabla.innerHTML += `
+          <tr>
+            <td>
+              <input type="checkbox" class="form-check-input chk" value="${r[0]}">
+            </td>
+            <td>${r[0]}</td>
+            <td>${r[2]}</td>
+            <td class="text-start">${r[5]}</td>
+            <td>${r[3]}</td>
+            <td>${r[4]}</td>
+            <td>${r[8]}</td>
+            <td>${r[11]}</td>
+            <td class="acciones">
+              <button class="btn btn-sm btn-outline-secondary"
+                onclick="imprimirIndividual('${r[0]}')">
+                🧾
+              </button>
+            </td>
+          </tr>
+          `;
+      });
+  });
+
+function imprimirIndividual(comanda){
+    window.open(
+        "ticket.html?comanda=" + comanda,
+        "ticket" + comanda,
+        "width=320,height=600"
+    );
+}
+
+function seleccionadas(){
+    return [...document.querySelectorAll(".chk:checked")]
+        .map(c => c.value);
+}
+
+function imprimirTickets(){
+    const lista = seleccionadas();
+    if(lista.length === 0){
+        alert("Seleccione al menos una comanda");
+        return;
+    }
+
+    window.open(
+        "ticket.html?lista=" + lista.join(","),
+        "ticketsContinuos",
+        "width=400,height=700"
+    );
+}
+
+
+function imprimirPDF(){
+    const lista = seleccionadas();
+    if(lista.length === 0){
+        alert("Seleccione al menos una comanda");
+        return;
+    }
+    window.open(
+        "pdf-4copias.html?lista=" + lista.join(","),
+        "pdf",
+        "width=900,height=700"
+    );
+}
+
+function seleccionarTodo(){
+    const checks = document.querySelectorAll(".chk");
+    const todos = [...checks].every(c => c.checked);
+    checks.forEach(c => c.checked = !todos);
+}
+
+
+function aplicarFiltros(){
+
+    const fechaFiltro = document.getElementById("filtroFecha").value;
+    const tiempoFiltro = document.getElementById("filtroTiempo").value.toUpperCase();
+
+    document.querySelectorAll("#tabla tr").forEach(row => {
+
+        const chk = row.querySelector(".chk");
+        if(!chk) return;
+
+        const fechaTexto = row.children[2].innerText.trim();
+        const tiempoTexto = row.children[6].innerText.trim().toUpperCase();
+
+        let coincide = true;
+
+        /* ---------- FILTRO FECHA ---------- */
+        if(fechaFiltro){
+            // extrae SOLO YYYY-MM-DD
+            const fechaNormalizada = fechaTexto.split("T")[0];
+            if(fechaNormalizada !== fechaFiltro){
+                coincide = false;
+            }
+        }
+
+        /* ---------- FILTRO TIEMPO ---------- */
+        if(tiempoFiltro && tiempoTexto !== tiempoFiltro){
+            coincide = false;
+        }
+
+        /* ---------- APLICAR RESULTADO ---------- */
+        chk.checked = coincide;
+        row.style.display = coincide ? "" : "none";
+    });
+}
+
+function quitarFiltros(){
+
+    // limpiar inputs
+    document.getElementById("filtroFecha").value = "";
+    document.getElementById("filtroTiempo").value = "";
+
+    // mostrar todas las filas y desmarcar
+    document.querySelectorAll("#tabla tr").forEach(row => {
+        const chk = row.querySelector(".chk");
+        if(!chk) return;
+
+        chk.checked = false;
+        row.style.display = "";
+    });
+}
+
+</script>
+
+</body>
+</html>
