@@ -5,129 +5,195 @@
 <title>Ticket Nutrición</title>
 
 <style>
+/* ================= IMPRESORA ZEBRA ================= */
 @page{
-    size:80mm auto;
-    margin:5mm;
+    size: 80mm auto;
+    margin: 4mm;
 }
 
 body{
-    font-family: Arial, sans-serif;
-    font-size:11px;
-    background:#fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    background: #fff;
+    margin: 0;
+    padding: 0;
 }
 
+/* ================= TICKET ================= */
 .ticket{
-    width:70mm;
-    margin:auto;
+    width: 72mm;
+    margin: 0 auto 6mm auto;
+    page-break-inside: avoid;
 }
 
-.row{
-    margin-bottom:4px;
+.linea{
+    border-top: 1px dashed #000;
+    margin: 5px 0;
 }
 
 .label{
-    font-weight:bold;
-    font-size:10px;
+    font-weight: bold;
+    font-size: 10px;
 }
 
-.value{
-    border-bottom:1px dashed #000;
-    padding-bottom:2px;
-    margin-bottom:2px;
+.valor{
+    margin-bottom: 3px;
 }
 
 .center{
-    text-align:center;
+    text-align: center;
 }
 
 .logo img{
-    max-width:60mm;
-    max-height:40px;
+    max-width: 60mm;
+    max-height: 35px;
+    margin-bottom: 4px;
 }
 
-hr{
-    border:none;
-    border-top:1px dashed #000;
-    margin:6px 0;
+.corte{
+    margin-top: 6mm;
+    border-top: 2px dotted #000;
+}
+
+/* ================= PANTALLA ================= */
+@media screen{
+    body{
+        background:#ededed;
+        padding:10px;
+    }
 }
 </style>
 </head>
 
-<body onload="window.print()">
+<body>
 
-<div class="ticket">
+<div id="contenedor"></div>
 
-<div class="logo center">
-    <img src="img/LOGO.jfif">
-</div>
+<script>
+/* ===================================================
+   CONFIGURACIÓN
+=================================================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJW0zZFp6C8OmXp3grBEOLTPWkjsSmMt_9Ck25Zog3Hk5x7c147pOdCb-we-KocS-R3A/exec";
 
-<hr>
+/* Columnas del Sheet */
+const CAMPOS = {
+  numeroComanda: 0,
+  fecha: 2,
+  piso: 3,
+  habitacion: 4,
+  paciente: 5,
+  fechaNacimiento: 6,
+  alergias: 7,
+  tiempoComida: 8,
+  diagnostico: 10,
+  tipoDieta: 11,
+  alimento: 12,
+  observaciones: 14
+};
 
-<div class="row">
-    <span class="label">Fecha:</span>
-    <span class="value" id="fecha"></span>
-</div>
+const contenedor = document.getElementById("contenedor");
 
-<div class="row">
-    <span class="label">No. Comanda:</span>
-    <span class="value" id="numeroComanda"></span>
-</div>
+/* ===================================================
+   UTILIDADES
+=================================================== */
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name);
+}
 
-<div class="row">
-    <span class="label">Paciente:</span>
-    <div class="value" id="paciente"></div>
-</div>
+function crearTicket(datos){
+  const t = document.createElement("div");
+  t.className = "ticket";
 
-<div class="row">
-    <span class="label">F. Nacimiento:</span>
-    <div class="value" id="fechaNacimiento"></div>
-</div>
-
-<div class="row">
-    <span class="label">Piso / Hab.:</span>
-    <div class="value">
-        <span id="piso"></span> / <span id="habitacion"></span>
+  t.innerHTML = `
+    <div class="logo center">
+        <img src="img/LOGO.jfif">
     </div>
-</div>
 
-<div class="row">
-    <span class="label">Alergias:</span>
-    <div class="value" id="alergias"></div>
-</div>
+    <div class="linea"></div>
 
-<div class="row">
-    <span class="label">Tiempo:</span>
-    <div class="value" id="tiempoComida"></div>
-</div>
+    <div class="valor"><span class="label">Fecha:</span> ${datos[CAMPOS.fecha] || ""}</div>
+    <div class="valor"><span class="label">No. Comanda:</span> ${datos[CAMPOS.numeroComanda] || ""}</div>
 
-<div class="row">
-    <span class="label">Tipo dieta:</span>
-    <div class="value" id="tipoDieta"></div>
-</div>
+    <div class="valor"><span class="label">Paciente:</span><br>${datos[CAMPOS.paciente] || ""}</div>
+    <div class="valor"><span class="label">F. Nacimiento:</span> ${datos[CAMPOS.fechaNacimiento] || ""}</div>
 
-<div class="row">
-    <span class="label">Diagnóstico:</span>
-    <div class="value" id="diagnostico"></div>
-</div>
+    <div class="valor">
+        <span class="label">Piso / Hab.:</span>
+        ${datos[CAMPOS.piso] || ""} / ${datos[CAMPOS.habitacion] || ""}
+    </div>
 
-<div class="row">
-    <span class="label">Platillo:</span>
-    <div class="value" id="alimento"></div>
-</div>
+    <div class="valor"><span class="label">Tiempo:</span> ${datos[CAMPOS.tiempoComida] || ""}</div>
+    <div class="valor"><span class="label">Tipo dieta:</span> ${datos[CAMPOS.tipoDieta] || ""}</div>
 
-<div class="row">
-    <span class="label">Observaciones:</span>
-    <div class="value" id="observaciones"></div>
-</div>
+    <div class="valor"><span class="label">Diagnóstico:</span><br>${datos[CAMPOS.diagnostico] || ""}</div>
 
-<hr>
+    <div class="valor"><span class="label">Platillo:</span><br>${datos[CAMPOS.alimento] || ""}</div>
 
-<div class="center">
-    *** USO INTERNO ***
-</div>
+    <div class="valor"><span class="label">Alergias:</span><br>${datos[CAMPOS.alergias] || ""}</div>
 
-</div>
+    <div class="valor"><span class="label">Observaciones:</span><br>${datos[CAMPOS.observaciones] || ""}</div>
 
-<script src="sync.js"></script>
+    <div class="linea"></div>
+    <div class="center">*** USO INTERNO ***</div>
+
+    <div class="corte"></div>
+  `;
+
+  return t;
+}
+
+/* ===================================================
+   MODO HISTORIAL (1 O MUCHAS COMANDAS)
+=================================================== */
+async function cargarDesdeHistorial(){
+  const lista = getParam("lista");
+  const uno = getParam("comanda");
+
+  let numeros = [];
+  if(lista) numeros = lista.split(",");
+  if(uno) numeros = [uno];
+
+  if(!numeros.length) return;
+
+  for(const n of numeros){
+    const datos = await fetch(`${SCRIPT_URL}?comanda=${n}`).then(r=>r.json());
+    contenedor.appendChild(crearTicket(datos));
+  }
+
+  setTimeout(()=>window.print(), 400);
+}
+
+cargarDesdeHistorial();
+
+/* ===================================================
+   MODO INDEX (postMessage)
+=================================================== */
+window.addEventListener("message", e => {
+  if(!e.data) return;
+
+  const d = e.data;
+
+  const datos = [];
+  datos[CAMPOS.numeroComanda]   = d.numeroComanda;
+  datos[CAMPOS.fecha]           = d.fecha;
+  datos[CAMPOS.piso]            = d.piso;
+  datos[CAMPOS.habitacion]      = d.habitacion;
+  datos[CAMPOS.paciente]        = d.paciente;
+  datos[CAMPOS.fechaNacimiento] = d.fechaNacimiento;
+  datos[CAMPOS.alergias]        = d.alergias;
+  datos[CAMPOS.tiempoComida]    = d.tiempoComida;
+  datos[CAMPOS.diagnostico]     = d.diagnostico;
+  datos[CAMPOS.tipoDieta]       = d.tipoDieta;
+  datos[CAMPOS.alimento]        = d.alimento;
+  datos[CAMPOS.observaciones]   = d.observaciones;
+
+  contenedor.appendChild(crearTicket(datos));
+
+  setTimeout(()=>window.print(), 300);
+});
+</script>
+
 </body>
 </html>
+
+
